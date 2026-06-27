@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal Harian</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f10;
+    --surface: #1a1a1c;
+    --surface2: #222226;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e6e0;
+    --muted: #6b6a66;
+    --faint: #3a3a3e;
+
+    --teal: #1D9E75;
+    --teal-dim: #0a3d2b;
+    --teal-text: #5ecba4;
+
+    --blue: #378ADD;
+    --blue-dim: #0d2a45;
+    --blue-text: #79b8f5;
+
+    --amber: #EF9F27;
+    --amber-dim: #3d2a08;
+    --amber-text: #f5c26b;
+
+    --coral: #D85A30;
+    --coral-dim: #3d1a0a;
+    --coral-text: #f0835a;
+
+    --gray-dim: #252527;
+    --gray-text: #aaa9a4;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 680px; margin: 0 auto; }
+
+  header { margin-bottom: 2.5rem; }
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  header p { color: var(--muted); font-size: 13px; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .leg {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+  .leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 2rem 0 0.75rem;
+    padding-left: 88px;
+  }
+
+  .blok {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .waktu {
+    min-width: 72px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    padding-top: 11px;
+    flex-shrink: 0;
+  }
+
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 11px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .line {
+    width: 1px;
+    flex: 1;
+    min-height: 20px;
+    background: var(--border);
+    margin-top: 4px;
+  }
+
+  .kartu {
+    flex: 1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    margin-bottom: 0;
+  }
+  .kartu .judul {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .kartu .sub {
+    font-size: 12px;
+    opacity: 0.75;
+  }
+
+  .wajib   { background: var(--teal-dim);  border-color: rgba(29,158,117,0.2); }
+  .wajib   .judul { color: var(--teal-text); }
+  .wajib   .dot   { background: var(--teal); }
+
+  .produktif { background: var(--blue-dim); border-color: rgba(55,138,221,0.2); }
+  .produktif .judul { color: var(--blue-text); }
+  .produktif .dot   { background: var(--blue); }
+
+  .main   { background: var(--amber-dim); border-color: rgba(239,159,39,0.2); }
+  .main   .judul { color: var(--amber-text); }
+  .main   .dot   { background: var(--amber); }
+
+  .istirahat { background: var(--gray-dim); border-color: var(--border); }
+  .istirahat .judul { color: var(--gray-text); }
+  .istirahat .dot   { background: var(--faint); }
+
+  .alarm  { background: var(--coral-dim); border-color: rgba(216,90,48,0.25); }
+  .alarm  .judul { color: var(--coral-text); }
+  .alarm  .dot   { background: var(--coral); }
+
+  .tip {
+    margin-top: 2.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .tip p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .tip p + p { margin-top: 8px; }
+  .tip strong { color: var(--text); font-weight: 500; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0 0;
+  }
+
+  @media (max-width: 480px) {
+    .waktu { min-width: 56px; font-size: 11px; }
+    header h1 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Jadwal harian</h1>
+    <p>Target bangun 06.00 · Tidur 23.00 · Bertahap, bukan langsung sempurna</p>
+  </header>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--teal)"></div> Wajib / rutinitas</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div> Belajar / produktif</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div> Main (dijatah)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--faint)"></div> Istirahat</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--coral)"></div> Batas keras</div>
+  </div>
+
+  <!-- PAGI -->
+  <div class="section-label">Pagi</div>
+
+  <div class="blok">
+    <div class="waktu">06.00</div>
+    <div class="connector wajib"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Bangun — jangan pegang HP dulu</div>
+      <div class="sub">Minum air, cuci muka, solat subuh. HP tetap di charger 30 menit pertama.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">06.30</div>
+    <div class="connector"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Sarapan &amp; beberes singkat</div>
+      <div class="sub">Makan, rapiin tempat tidur, siap-siap mulai hari.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">07.00</div>
+    <div class="connector"><div class="dot produktif" style="background:var(--blue)"></div><div class="line"></div></div>
+    <div class="kartu produktif">
+      <div class="judul">Fokus belajar / tugas sekolah</div>
+      <div class="sub">2 jam tanpa distraksi. Matiin notif Discord &amp; semua ping selama sesi ini.</div>
+    </div>
+  </div>
+
+  <!-- SIANG -->
+  <hr class="divider">
+  <div class="section-label">Siang</div>
+
+  <div class="blok">
+    <div class="waktu">09.00</div>
+    <div class="connector"><div class="dot istirahat" style="background:var(--faint)"></div><div class="line"></div></div>
+    <div class="kartu istirahat">
+      <div class="judul">Istirahat sebentar</div>
+      <div class="sub">15–20 menit. Stretch, minum, jalan sebentar.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">09.20</div>
+    <div class="connector"><div class="dot produktif" style="background:var(--blue)"></div><div class="line"></div></div>
+    <div class="kartu produktif">
+      <div class="judul">Ngurus Discord &amp; Minecraft server</div>
+      <div class="sub">Cek issue, balas pesan penting, update bot. Terjadwal, bukan reaktif.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">11.00</div>
+    <div class="connector"><div class="dot main" style="background:var(--amber)"></div><div class="line"></div></div>
+    <div class="kartu main">
+      <div class="judul">Waktu main bebas #1</div>
+      <div class="sub">Game, medsos, YouTube — jatah 1.5 jam. Pakai timer, berhenti saat bunyi.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">12.30</div>
+    <div class="connector"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Makan siang + istirahat</div>
+      <div class="sub">Makan, solat dzuhur, rebahan. Maksimal 1 jam.</div>
+    </div>
+  </div>
+
+  <!-- SORE -->
+  <hr class="divider">
+  <div class="section-label">Sore</div>
+
+  <div class="blok">
+    <div class="waktu">13.30</div>
+    <div class="connector"><div class="dot produktif" style="background:var(--blue)"></div><div class="line"></div></div>
+    <div class="kartu produktif">
+      <div class="judul">Fokus belajar / tugas #2</div>
+      <div class="sub">Selesaikan PR, baca materi, atau kerjain project Discord bot.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">15.30</div>
+    <div class="connector"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Solat ashar + istirahat</div>
+      <div class="sub">Jangan skip.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">17.00</div>
+    <div class="connector"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Olahraga 1 jam</div>
+      <div class="sub">Udah ada di jadwal lo — jaga tetap di sini, jangan digeser ke mana-mana.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">18.00</div>
+    <div class="connector"><div class="dot wajib" style="background:var(--teal)"></div><div class="line"></div></div>
+    <div class="kartu wajib">
+      <div class="judul">Mandi + solat maghrib &amp; isya</div>
+      <div class="sub">Bersih-bersih, makan malam.</div>
+    </div>
+  </div>
+
+  <!-- MALAM -->
+  <hr class="divider">
+  <div class="section-label">Malam</div>
+
+  <div class="blok">
+    <div class="waktu">19.00</div>
+    <div class="connector"><div class="dot main" style="background:var(--amber)"></div><div class="line"></div></div>
+    <div class="kartu main">
+      <div class="judul">Waktu main bebas #2 — sesi utama</div>
+      <div class="sub">Jatah main terbesar lo — 2.5 jam bebas tanpa rasa guilty. Pakai timer.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">21.30</div>
+    <div class="connector"><div class="dot produktif" style="background:var(--blue)"></div><div class="line"></div></div>
+    <div class="kartu produktif">
+      <div class="judul">Ngurus Discord &amp; server — sesi malam</div>
+      <div class="sub">30–45 menit cek akhir, balas pesan, update bot sebelum tidur.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">22.15</div>
+    <div class="connector"><div class="dot istirahat" style="background:var(--faint)"></div><div class="line"></div></div>
+    <div class="kartu istirahat">
+      <div class="judul">Wind down</div>
+      <div class="sub">Redup layar, hindari konten berat. Bersiap tidur.</div>
+    </div>
+  </div>
+
+  <div class="blok">
+    <div class="waktu">23.00</div>
+    <div class="connector"><div class="dot alarm" style="background:var(--coral)"></div></div>
+    <div class="kartu alarm">
+      <div class="judul">Batas keras — HP silent, layar mati</div>
+      <div class="sub">Ini batas tidur lo. Kalau mau bangun jam 06.00, harus tidur jam ini. Tanpa negosiasi.</div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <p><strong>Fokus minggu pertama:</strong> Jangan langsung ketat semua. Cukup 2 hal — <strong>bangun jam 06.00</strong> dan <strong>HP mati jam 23.00.</strong> Sisanya ngikut sendiri.</p>
+    <p><strong>Soal olahraga jam 2 pagi itu:</strong> Itu tanda siklus tidur lo udah nocturnal. Fix-nya: paksa bangun lebih awal walau ngantuk parah, tahan melek sampai malem, tidur jam 23.00. Satu hari rasa mati — tapi jam biologis langsung reset.</p>
+  </div>
+
+</div>
+</body>
+</html>
